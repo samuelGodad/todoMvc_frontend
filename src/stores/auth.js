@@ -259,6 +259,33 @@ export const useAuthStore = defineStore('auth', {
     },
 
     /**
+     * Update user name
+     */
+    async updateName(payload) {
+      try {
+        const response = await axios.put('/person/me', payload)
+
+        if (response.data?.success) {
+          // Update user data in store
+          this.updateUser(response.data.person)
+          
+          Notify.create({
+            message: response.data?.message || 'Name updated successfully',
+            color: 'positive',
+            position: 'top',
+            timeout: 3000,
+          })
+          return true
+        } else {
+          this.showErrorNotification(response.data?.message)
+          return false
+        }
+      } catch (error) {
+        return this.handleApiError(error, 'Failed to update name')
+      }
+    },
+
+    /**
      * Login with OAuth provider
      */
     async loginWithOAuth(provider, payload) {

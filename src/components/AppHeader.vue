@@ -20,9 +20,19 @@
         <b>{{ authStore.user.first_name }} {{ authStore.user.last_name }}</b>
         <q-icon size="xs" name="arrow_drop_down" />
         <q-menu fir anchor="bottom right" self="top right">
-          <q-list style="min-width: 100px">
-            <q-item clickable v-close-popup>
-              <q-item-section @click="authStore.logout()">Logout</q-item-section>
+          <q-list style="min-width: 150px">
+            <q-item clickable v-close-popup @click="showEditNameDialog = true">
+              <q-item-section avatar>
+                <q-icon name="edit" />
+              </q-item-section>
+              <q-item-section>Edit Name</q-item-section>
+            </q-item>
+            <q-separator />
+            <q-item clickable v-close-popup @click="authStore.logout()">
+              <q-item-section avatar>
+                <q-icon name="logout" />
+              </q-item-section>
+              <q-item-section>Logout</q-item-section>
             </q-item>
           </q-list>
         </q-menu>
@@ -35,6 +45,9 @@
       <EssentialLink v-for="link in linksList" :key="link.title" v-bind="link" />
     </q-list>
   </q-drawer>
+
+  <!-- Edit Name Dialog -->
+  <EditNameDialog v-model="showEditNameDialog" />
 </template>
 
 
@@ -43,6 +56,7 @@ import { ref } from 'vue'
 import { useAuthStore } from 'stores/auth'
 import versionData from '@/version.json'
 import EssentialLink from 'components/EssentialLink.vue'
+import EditNameDialog from 'components/EditNameDialog.vue'
 
 const linksList = [
   {
@@ -56,6 +70,7 @@ const authStore = useAuthStore()
 const version = versionData.version
 
 const leftDrawerOpen = ref(false)
+const showEditNameDialog = ref(false)
 
 function toggleLeftDrawer() {
   leftDrawerOpen.value = !leftDrawerOpen.value
