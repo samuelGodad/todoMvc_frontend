@@ -26,15 +26,27 @@
         </q-card>
       </div>
 
-      <!-- Tasks Section (Placeholder for now) -->
+      <!-- Tasks Section -->
       <div class="col-12">
         <q-card>
           <q-card-section>
             <div class="text-h6 q-mb-md">Your Tasks</div>
-            <div class="text-center q-pa-xl text-grey-6">
-              <q-icon name="task_alt" size="64px" class="q-mb-md" />
-              <div class="text-h6">No tasks yet</div>
-              <div class="text-body2">Tasks will appear here once you start adding them</div>
+            
+            <!-- Task Input -->
+            <TaskInput class="q-mb-md" />
+
+            <!-- Task List -->
+            <TaskList />
+
+            <!-- Task Filters -->
+            <TaskFilters />
+
+            <!-- Task Stats -->
+            <div v-if="taskStore.tasksCount > 0" class="q-mt-md text-center text-caption text-grey-6">
+              {{ taskStore.activeTasksCount }} active task{{ taskStore.activeTasksCount !== 1 ? 's' : '' }}
+              <span v-if="taskStore.completedTasksCount > 0">
+                • {{ taskStore.completedTasksCount }} completed
+              </span>
             </div>
           </q-card-section>
         </q-card>
@@ -47,10 +59,20 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useAuthStore } from 'stores/auth'
+import { useTaskStore } from 'stores/task'
 import EditNameDialog from 'components/EditNameDialog.vue'
+import TaskInput from 'components/TaskInput.vue'
+import TaskList from 'components/TaskList.vue'
+import TaskFilters from 'components/TaskFilters.vue'
 
 const authStore = useAuthStore()
+const taskStore = useTaskStore()
 const showEditNameDialog = ref(false)
+
+onMounted(() => {
+  // Load tasks when component mounts
+  taskStore.fetchTasks('all')
+})
 </script>
