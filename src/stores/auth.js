@@ -134,13 +134,25 @@ export const useAuthStore = defineStore('auth', {
      */
     async setPassword(token, uidb64, payload) {
       try {
-        return await handleAuthRequest(
-          this,
-          () => axios.post(`/auth/reset_password/${token}/${uidb64}`, payload),
-          this.router,
-        )
+        const response = await axios.post(`/auth/reset_password/${token}/${uidb64}`, payload)
+
+        if (response.data?.success) {
+          Notify.create({
+            message: 'Password reset successful! Please log in with your new password.',
+            color: 'positive',
+            position: 'top',
+            timeout: 5000,
+          })
+          
+          // Return success - component will handle redirect to login
+          return { success: true, redirectToLogin: true }
+        } else {
+          this.showErrorNotification(response.data?.message)
+          return { success: false }
+        }
       } catch (error) {
-        return this.handleApiError(error, 'Failed to set password')
+        this.handleApiError(error, 'Failed to set password')
+        return { success: false }
       }
     },
 
@@ -149,7 +161,7 @@ export const useAuthStore = defineStore('auth', {
      */
     async requestPasswordReset(email) {
       try {
-        const response = await axios.post('/auth/request_password_reset', { email })
+        const response = await axios.post('/auth/forgot_password', { email })
 
         if (response.data?.success) {
           Notify.create({
@@ -244,6 +256,33 @@ export const useAuthStore = defineStore('auth', {
     updateUser(userData) {
       this.user = { ...this.user, ...userData }
       localStorageService.setItem(STORAGE_KEYS.USER, this.user)
+    },
+
+    /**
+     * Update user name
+     */
+    async updateName(payload) {
+      try {
+        const response = await axios.put('/person/me', payload)
+
+        if (response.data?.success) {
+          // Update user data in store
+          this.updateUser(response.data.person)
+          
+          Notify.create({
+            message: response.data?.message || 'Name updated successfully',
+            color: 'positive',
+            position: 'top',
+            timeout: 3000,
+          })
+          return true
+        } else {
+          this.showErrorNotification(response.data?.message)
+          return false
+        }
+      } catch (error) {
+        return this.handleApiError(error, 'Failed to update name')
+      }
     },
 
     /**

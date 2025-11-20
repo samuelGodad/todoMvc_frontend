@@ -14,7 +14,13 @@
           <q-input v-model="email" type="email" label="Email" outlined class="q-mb-lg" />
 
           <!-- Reset password Button -->
-          <q-btn label="Reset password" color="primary" type="submit" class="full-width" />
+          <q-btn 
+            label="Reset password" 
+            color="primary" 
+            type="submit" 
+            class="full-width"
+            :loading="loading"
+          />
 
           <!-- Login Link -->
           <div class="text-center q-mt-md">
@@ -33,14 +39,32 @@
   
 <script setup>
 import { ref } from 'vue'
+import { useAuthStore } from 'stores/auth'
+import { Notify } from 'quasar'
 
+const authStore = useAuthStore()
 const email = ref('')
-const password = ref('')
+const loading = ref(false)
 
-// Placeholder login function
-function onSubmit() {
-  // Implement actual login logic here
-  console.log('Logging in with:', email.value, password.value)
+async function onSubmit() {
+  if (!email.value) {
+    Notify.create({
+      message: 'Please enter your email address',
+      color: 'negative',
+      position: 'top',
+    })
+    return
+  }
+
+  loading.value = true
+  try {
+    const success = await authStore.requestPasswordReset(email.value)
+    if (success) {
+      email.value = '' // Clear email on success
+    }
+  } finally {
+    loading.value = false
+  }
 }
 </script>
   

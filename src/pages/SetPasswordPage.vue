@@ -32,7 +32,14 @@
           />
 
           <!-- Set password Button -->
-          <q-btn label="Set password" color="primary" type="submit" class="full-width" />
+          <q-btn 
+            label="Set password" 
+            color="primary" 
+            type="submit" 
+            class="full-width"
+            :loading="loading"
+            :disable="!password || !passwordConfirm || password !== passwordConfirm"
+          />
         </q-form>
       </q-card-section>
     </q-card>
@@ -40,11 +47,12 @@
 </template>
   
 <script setup>
-import { ref, onMounted } from 'vue'
-import { useRoute } from 'vue-router'
+import { ref } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import { useAuthStore } from 'stores/auth'
 
 const route = useRoute()
+const router = useRouter()
 const authStore = useAuthStore()
 
 const token = route.params.token
@@ -52,6 +60,7 @@ const uidb64 = route.params.uidb64
 
 const password = ref('')
 const passwordConfirm = ref('')
+const loading = ref(false)
 
 const passwordRules = [
   (v) => !!v || 'Password is required',
@@ -60,14 +69,24 @@ const passwordRules = [
 
 const confirmPasswordRules = [(v) => v === password.value || 'Passwords do not match.']
 
-onMounted(() => {
-  console.log('mounted')
-})
-// Placeholder login function
 async function onSubmit() {
-  await authStore.setPassword(token, uidb64, {
+  if (password.value !== passwordConfirm.value) {
+    return
+  }
+  
+  loading.value = true
+  try {
+    const result = await authStore.setPassword(token, uidb64, {
     password: password.value,
   })
+    
+    // Redirect to login page after successful password reset
+    if (result?.success && result?.redirectToLogin) {
+      router.push('/login')
+    }
+  } finally {
+    loading.value = false
+  }
 }
 </script>
   
