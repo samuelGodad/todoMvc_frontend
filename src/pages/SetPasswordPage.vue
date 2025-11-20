@@ -77,8 +77,8 @@ async function onSubmit() {
   loading.value = true
   try {
     const result = await authStore.setPassword(token, uidb64, {
-      password: password.value,
-    })
+    password: password.value,
+  })
     
     // Redirect to login page after successful password reset
     if (result?.success && result?.redirectToLogin) {

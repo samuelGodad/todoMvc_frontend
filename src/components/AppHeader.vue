@@ -40,10 +40,33 @@
     </q-toolbar>
   </q-header>
 
-  <q-drawer v-if="authStore.isAuthenticated" v-model="leftDrawerOpen" show-if-above bordered>
-    <q-list>
-      <EssentialLink v-for="link in linksList" :key="link.title" v-bind="link" />
+  <q-drawer 
+    v-if="authStore.isAuthenticated" 
+    v-model="leftDrawerOpen" 
+    show-if-above 
+    :width="280"
+    class="bg-grey-1"
+    :bordered="false"
+  >
+    <div class="user-info-section bg-primary text-white">
+      <div class="text-h6 q-mb-xs">
+        {{ authStore.user?.first_name || 'User' }} {{ authStore.user?.last_name || '' }}
+      </div>
+      <div class="text-caption text-grey-3">
+        {{ authStore.user?.email || '' }}
+      </div>
+    </div>
+
+    <!-- Navigation Menu -->
+    <div class="navigation-menu">
+      <q-list padding class="q-pt-sm">
+        <EssentialLink
+          v-for="link in mainLinks"
+          :key="link.title"
+          v-bind="link"
+        />
     </q-list>
+    </div>
   </q-drawer>
 
   <!-- Edit Name Dialog -->
@@ -52,21 +75,37 @@
 
 
 <script setup>
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { useAuthStore } from 'stores/auth'
+import { useTaskStore } from 'stores/task'
 import versionData from '@/version.json'
 import EssentialLink from 'components/EssentialLink.vue'
 import EditNameDialog from 'components/EditNameDialog.vue'
 
-const linksList = [
+const authStore = useAuthStore()
+const taskStore = useTaskStore()
+
+const mainLinks = computed(() => [
   {
     title: 'Dashboard',
-    icon: 'code',
+    icon: 'dashboard',
     link: '/dashboard',
+    caption: `${taskStore.tasksCount} total tasks`,
   },
-]
+  {
+    title: 'Active Tasks',
+    icon: 'pending_actions',
+    link: '/dashboard?filter=active',
+    caption: `${taskStore.activeTasksCount} pending`,
+  },
+  {
+    title: 'Completed',
+    icon: 'check_circle',
+    link: '/dashboard?filter=completed',
+    caption: `${taskStore.completedTasksCount} done`,
+  },
+])
 
-const authStore = useAuthStore()
 const version = versionData.version
 
 const leftDrawerOpen = ref(false)
@@ -76,3 +115,63 @@ function toggleLeftDrawer() {
   leftDrawerOpen.value = !leftDrawerOpen.value
 }
 </script>
+
+<style scoped>
+:deep(.q-drawer) {
+  border: none !important;
+  margin-top: 0 !important;
+}
+
+:deep(.q-drawer__content) {
+  padding: 0 !important;
+  margin: 0 !important;
+  overflow: hidden !important;
+  width: 280px !important;
+  max-width: 280px !important;
+  box-sizing: border-box !important;
+}
+
+.user-info-section {
+  height: 64px;
+  min-height: 64px;
+  max-height: 64px;
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+  padding: 0;
+  padding-left: 12px;
+  padding-right: 12px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  box-sizing: border-box;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+.navigation-menu {
+  height: calc(100vh - 64px);
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-top: 8px;
+}
+
+.navigation-menu::-webkit-scrollbar {
+  width: 0px;
+  background: transparent;
+  display: none;
+}
+
+.navigation-menu {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+:deep(.navigation-menu .q-scrollarea__content) {
+  overflow: hidden !important;
+}
+
+:deep(.q-scrollarea__thumb) {
+  display: none !important;
+}
+</style>

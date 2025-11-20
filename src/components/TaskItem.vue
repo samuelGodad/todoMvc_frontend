@@ -13,7 +13,7 @@
       />
     </q-item-section>
 
-    <q-item-section>
+      <q-item-section>
       <q-input
         v-if="isEditing"
         v-model="editTitle"
@@ -28,9 +28,13 @@
       />
       <q-item-label
         v-else
-        :class="{ 'text-strikethrough': task.completed, 'text-grey-6': task.completed }"
-        class="task-label cursor-pointer"
-        @dblclick="startEditing"
+        :class="{ 
+          'text-strikethrough': task.completed, 
+          'text-grey-6': task.completed,
+          'cursor-pointer': !task.completed
+        }"
+        class="task-label"
+        @dblclick="handleLabelClick"
       >
         {{ task.title }}
       </q-item-label>
@@ -39,7 +43,7 @@
     <q-item-section side>
       <div class="row q-gutter-xs task-actions">
         <q-btn
-          v-if="!isEditing"
+          v-if="!isEditing && !task.completed"
           flat
           dense
           round
@@ -50,6 +54,19 @@
           class="action-btn"
         >
           <q-tooltip>Edit task</q-tooltip>
+        </q-btn>
+        <q-btn
+          v-if="!isEditing && task.completed"
+          flat
+          dense
+          round
+          icon="restore"
+          color="primary"
+          @click="handleRestore"
+          size="sm"
+          class="action-btn"
+        >
+          <q-tooltip>Restore to active</q-tooltip>
         </q-btn>
         <q-btn
           v-if="!isEditing"
@@ -68,7 +85,6 @@
     </q-item-section>
   </q-item>
 
-  <!-- Delete Confirmation Dialog -->
   <q-dialog v-model="showDeleteDialog">
     <q-card>
       <q-card-section class="row items-center q-pb-none">
@@ -110,8 +126,17 @@ const editTitle = ref('')
 const showDeleteDialog = ref(false)
 
 function startEditing() {
+  if (props.task.completed) {
+    return
+  }
   isEditing.value = true
   editTitle.value = props.task.title
+}
+
+function handleLabelClick() {
+  if (!props.task.completed) {
+    startEditing()
+  }
 }
 
 function handleCancel() {
@@ -135,6 +160,10 @@ async function handleToggle() {
   await taskStore.toggleTask(props.task.entity_id)
 }
 
+async function handleRestore() {
+  await taskStore.toggleTask(props.task.entity_id)
+}
+
 async function confirmDelete() {
   showDeleteDialog.value = false
   await taskStore.deleteTask(props.task.entity_id)
@@ -143,13 +172,15 @@ async function confirmDelete() {
 
 <style scoped>
 .task-item {
-  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
-  padding: 12px 16px;
-  transition: background-color 0.2s ease;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  padding: 12px 14px;
+  transition: transform 0.12s ease, background-color 0.12s ease;
+  border-radius: 6px;
 }
 
 .task-item:hover {
-  background-color: rgba(0, 0, 0, 0.02);
+  background-color: rgba(16, 24, 40, 0.03);
+  transform: translateY(-2px);
 }
 
 .task-item:hover .task-actions {
@@ -157,7 +188,7 @@ async function confirmDelete() {
 }
 
 .task-completed {
-  opacity: 0.7;
+  opacity: 0.75;
 }
 
 .task-label {

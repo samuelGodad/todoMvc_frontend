@@ -4,75 +4,70 @@
       <!-- Welcome Section -->
       <div class="col-12">
         <q-card class="q-pa-md">
-          <div class="row items-center q-gutter-md">
-            <div class="col">
-              <div class="text-h4 q-mb-sm">
-                Welcome, {{ authStore.user?.first_name || 'User' }}! 👋
-              </div>
-              <div class="text-body1 text-grey-7">
-                Manage your tasks and stay organized
-              </div>
-            </div>
-            <div>
-              <q-btn
-                color="primary"
-                icon="edit"
-                label="Edit Name"
-                @click="showEditNameDialog = true"
-                outline
-              />
-            </div>
+          <div class="text-h4 q-mb-sm">
+            Welcome, {{ authStore.user?.first_name || 'User' }}! 👋
+          </div>
+          <div class="text-body1 text-grey-7">
+            Manage your tasks and stay organized
           </div>
         </q-card>
       </div>
 
       <!-- Tasks Section -->
-      <div class="col-12">
-        <q-card>
-          <q-card-section>
-            <div class="text-h6 q-mb-md">Your Tasks</div>
-            
-            <!-- Task Input -->
-            <TaskInput class="q-mb-md" />
+          <div class="col-12">
+            <q-card>
+              <q-card-section>
+                <div class="text-h6 q-mb-md">Your Tasks</div>
 
-            <!-- Task List -->
-            <TaskList />
+                <TaskInput ref="taskInputRef" class="q-mb-md" />
 
-            <!-- Task Filters -->
-            <TaskFilters />
+                <TaskFilters class="q-mb-md" />
 
-            <!-- Task Stats -->
-            <div v-if="taskStore.tasksCount > 0" class="q-mt-md text-center text-caption text-grey-6">
-              {{ taskStore.activeTasksCount }} active task{{ taskStore.activeTasksCount !== 1 ? 's' : '' }}
-              <span v-if="taskStore.completedTasksCount > 0">
-                • {{ taskStore.completedTasksCount }} completed
-              </span>
-            </div>
-          </q-card-section>
-        </q-card>
-      </div>
+                <TaskList @focus-input="focusTaskInput" />
+
+                <div v-if="taskStore.tasksCount > 0" class="q-mt-md text-center text-caption text-grey-6">
+                  {{ taskStore.activeTasksCount }} active task{{ taskStore.activeTasksCount !== 1 ? 's' : '' }}
+                  <span v-if="taskStore.completedTasksCount > 0">
+                    • {{ taskStore.completedTasksCount }} completed
+                  </span>
+                </div>
+              </q-card-section>
+            </q-card>
+          </div>
     </div>
-
-    <!-- Edit Name Dialog -->
-    <EditNameDialog v-model="showEditNameDialog" />
   </q-page>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, watch } from 'vue'
+import { useRoute } from 'vue-router'
 import { useAuthStore } from 'stores/auth'
 import { useTaskStore } from 'stores/task'
-import EditNameDialog from 'components/EditNameDialog.vue'
 import TaskInput from 'components/TaskInput.vue'
 import TaskList from 'components/TaskList.vue'
 import TaskFilters from 'components/TaskFilters.vue'
 
+const route = useRoute()
 const authStore = useAuthStore()
 const taskStore = useTaskStore()
-const showEditNameDialog = ref(false)
+const taskInputRef = ref(null)
+
+function focusTaskInput() {
+  if (taskInputRef.value && typeof taskInputRef.value.focusInput === 'function') {
+    taskInputRef.value.focusInput()
+  }
+}
+
+function loadTasksFromQuery() {
+  const filter = route.query.filter || 'all'
+  taskStore.fetchTasks(filter)
+}
 
 onMounted(() => {
-  // Load tasks when component mounts
-  taskStore.fetchTasks('all')
+  loadTasksFromQuery()
+})
+
+watch(() => route.query.filter, () => {
+  loadTasksFromQuery()
 })
 </script>
