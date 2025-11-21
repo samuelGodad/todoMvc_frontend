@@ -2,7 +2,6 @@
   <div class="task-filters q-pa-sm">
     <div class="row items-center justify-between q-gutter-sm">
       <div class="row items-center q-gutter-sm">
-        <!-- Filters: pill on desktop, icon-only on mobile -->
         <template v-if="!isMobile">
           <q-btn
             :color="filter === 'all' ? 'primary' : 'grey-7'"
@@ -42,7 +41,6 @@
         </template>
 
         <template v-else>
-          <!-- Compact icon buttons for small screens: keep filters visible and tappable -->
           <div class="mobile-filter-btns row items-center q-gutter-xs">
             <q-btn
               dense
@@ -77,7 +75,6 @@
         </template>
       </div>
 
-      <!-- Sort button on the right -->
       <div>
         <q-btn-dropdown
           dense
@@ -117,7 +114,6 @@ const isMobile = computed(() => {
     // ignore
   }
 
-  // Fallback if Quasar screen plugin isn't available yet
   if (typeof window !== 'undefined' && window.matchMedia) {
     return window.matchMedia('(max-width: 767px)').matches
   }
@@ -154,10 +150,6 @@ function applySort(key) {
   taskStore.setSort(key)
 }
 
-// function applyFilter(key) {
-//   taskStore.setFilter(key)
-//   showFilterMenu.value = false
-// }
 
 </script>
 
@@ -178,7 +170,6 @@ function applySort(key) {
   box-shadow: 0 6px 20px rgba(16,24,40,0.06);
 }
 
-/* Mobile compact buttons */
 .mobile-filter-btn {
   min-width: 36px;
   width: 36px;
