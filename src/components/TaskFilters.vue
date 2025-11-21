@@ -2,7 +2,6 @@
   <div class="task-filters q-pa-sm">
     <div class="row items-center justify-between q-gutter-sm">
       <div class="row items-center q-gutter-sm">
-        <!-- use icon for small device and actual buttons for large devices-->
         <template v-if="!isMobile">
           <q-btn
             :color="filter === 'all' ? 'primary' : 'grey-7'"
@@ -75,6 +74,7 @@
           </div>
         </template>
       </div>
+
       <div>
         <q-btn-dropdown
           dense
@@ -150,6 +150,7 @@ function applySort(key) {
   taskStore.setSort(key)
 }
 
+
 </script>
 
 <style scoped>
@@ -169,7 +170,6 @@ function applySort(key) {
   box-shadow: 0 6px 20px rgba(16,24,40,0.06);
 }
 
-/* for small screens*/
 .mobile-filter-btn {
   min-width: 36px;
   width: 36px;

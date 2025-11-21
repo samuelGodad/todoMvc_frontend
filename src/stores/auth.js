@@ -143,7 +143,7 @@ export const useAuthStore = defineStore('auth', {
             position: 'top',
             timeout: 5000,
           })
-          
+
           // Return success - component will handle redirect to login
           return { success: true, redirectToLogin: true }
         } else {
@@ -268,7 +268,7 @@ export const useAuthStore = defineStore('auth', {
         if (response.data?.success) {
           // Update user data in store
           this.updateUser(response.data.person)
-          
+
           Notify.create({
             message: response.data?.message || 'Name updated successfully',
             color: 'positive',
@@ -291,9 +291,9 @@ export const useAuthStore = defineStore('auth', {
     async loginWithOAuth(provider, payload) {
       try {
         return await handleOAuthRequest(
-          this, 
-          () => axios.post(`/auth/${provider}/exchange`, payload), 
-          this.router
+          this,
+          () => axios.post(`/auth/${provider}/exchange`, payload),
+          this.router,
         )
       } catch (error) {
         return this.handleApiError(error, 'OAuth login failed')

@@ -40,10 +40,10 @@
     </q-toolbar>
   </q-header>
 
-  <q-drawer 
-    v-if="authStore.isAuthenticated" 
-    v-model="leftDrawerOpen" 
-    show-if-above 
+  <q-drawer
+    v-if="authStore.isAuthenticated"
+    v-model="leftDrawerOpen"
+    show-if-above
     :width="280"
     class="bg-grey-1"
     :bordered="false"
@@ -60,19 +60,14 @@
     <!-- Navigation Menu -->
     <div class="navigation-menu">
       <q-list padding class="q-pt-sm">
-        <EssentialLink
-          v-for="link in mainLinks"
-          :key="link.title"
-          v-bind="link"
-        />
-    </q-list>
+        <EssentialLink v-for="link in mainLinks" :key="link.title" v-bind="link" />
+      </q-list>
     </div>
   </q-drawer>
 
   <!-- Edit Name Dialog -->
   <EditNameDialog v-model="showEditNameDialog" />
 </template>
-
 
 <script setup>
 import { ref, computed } from 'vue'

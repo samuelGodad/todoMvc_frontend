@@ -13,4 +13,3 @@ onMounted(() => {
   authStore.initialize()
 })
 </script>
-

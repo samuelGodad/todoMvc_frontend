@@ -4,7 +4,9 @@
       <q-card-section class="row items-center justify-between q-px-md q-pt-sm">
         <div>
           <div class="text-h6">Your Tasks</div>
-          <div class="text-caption text-grey-6">{{ taskStore.activeTasksCount }} active • {{ taskStore.completedTasksCount }} completed</div>
+          <div class="text-caption text-grey-6">
+            {{ taskStore.activeTasksCount }} active • {{ taskStore.completedTasksCount }} completed
+          </div>
         </div>
         <div class="text-subtitle2 text-grey-7">{{ taskStore.tasksCount }} total</div>
       </q-card-section>
@@ -13,11 +15,7 @@
 
       <q-card-section class="q-pa-none">
         <q-list v-if="tasks.length > 0" separator>
-          <TaskItem
-            v-for="task in tasks"
-            :key="task.entity_id"
-            :task="task"
-          />
+          <TaskItem v-for="task in tasks" :key="task.entity_id" :task="task" />
         </q-list>
 
         <div v-else class="text-center q-pa-xl text-grey-6 empty-state">
@@ -28,7 +26,12 @@
             <span v-else-if="taskStore.filter === 'completed'">No completed tasks</span>
             <span v-else>Start by adding a task above</span>
           </div>
-          <q-btn color="primary" label="Add your first task" unelevated @click="$emit('focus-input')" />
+          <q-btn
+            color="primary"
+            label="Add your first task"
+            unelevated
+            @click="$emit('focus-input')"
+          />
         </div>
       </q-card-section>
     </q-card>
@@ -63,4 +66,3 @@ const tasks = computed(() => taskStore.filteredAndSortedTasks)
   opacity: 0.95;
 }
 </style>
-

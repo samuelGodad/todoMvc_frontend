@@ -92,7 +92,7 @@
     </q-card>
   </q-page>
 </template>
-    
+
 <script setup>
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
@@ -113,11 +113,16 @@ const authStore = useAuthStore()
 
 // Check if OAuth providers are configured
 const hasGoogleProvider = computed(() => {
-  return import.meta.env.VITE_GOOGLE_CLIENT_ID && import.meta.env.VITE_GOOGLE_CLIENT_ID.trim() !== ''
+  return (
+    import.meta.env.VITE_GOOGLE_CLIENT_ID && import.meta.env.VITE_GOOGLE_CLIENT_ID.trim() !== ''
+  )
 })
 
 const hasMicrosoftProvider = computed(() => {
-  return import.meta.env.VITE_MICROSOFT_CLIENT_ID && import.meta.env.VITE_MICROSOFT_CLIENT_ID.trim() !== ''
+  return (
+    import.meta.env.VITE_MICROSOFT_CLIENT_ID &&
+    import.meta.env.VITE_MICROSOFT_CLIENT_ID.trim() !== ''
+  )
 })
 
 const hasOAuthProviders = computed(() => {
@@ -148,7 +153,7 @@ function backToLogin() {
 async function signInWithGoogle() {
   googleLoading.value = true
   try {
-    await AuthService.signIn("google", authStore.invitationToken)
+    await AuthService.signIn('google', authStore.invitationToken)
   } catch (error) {
     console.error('Google sign-in error:', error)
   } finally {
@@ -159,7 +164,7 @@ async function signInWithGoogle() {
 async function signInWithMicrosoft() {
   microsoftLoading.value = true
   try {
-    await AuthService.signIn("microsoft", authStore.invitationToken)
+    await AuthService.signIn('microsoft', authStore.invitationToken)
   } catch (error) {
     console.error('Microsoft sign-in error:', error)
   } finally {
@@ -167,4 +172,3 @@ async function signInWithMicrosoft() {
   }
 }
 </script>
-    

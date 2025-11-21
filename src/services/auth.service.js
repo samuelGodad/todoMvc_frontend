@@ -1,6 +1,6 @@
-import { UserManager, WebStorageStateStore } from 'oidc-client-ts';
+import { UserManager, WebStorageStateStore } from 'oidc-client-ts'
 
-const redirectUri = `${window.location.origin}/auth/callback`;
+const redirectUri = `${window.location.origin}/auth/callback`
 
 function getConfig(provider) {
   const base = {
@@ -10,25 +10,27 @@ function getConfig(provider) {
     userStore: new WebStorageStateStore({ store: window.localStorage }),
     // Enable PKCE for security
     code_challenge_method: 'S256',
-  };
-  
+  }
+
   if (provider === 'microsoft') {
-    return { ...base,
+    return {
+      ...base,
       authority: 'https://login.microsoftonline.com/common/v2.0',
       client_id: import.meta.env.VITE_MICROSOFT_CLIENT_ID,
       scope: 'User.Read',
-      response_mode: 'query',  // Ensure code is returned in query parameters
+      response_mode: 'query', // Ensure code is returned in query parameters
       // No prompt parameter - Microsoft will handle returning users automatically
       // Only show consent screen for new users who haven't authorized the app
       extraQueryParams: {},
       // Microsoft-specific settings for better UX
       loadUserInfo: true,
-      automaticSilentRenew: true
-    };
+      automaticSilentRenew: true,
+    }
   }
-  
+
   if (provider === 'google') {
-    return { ...base,
+    return {
+      ...base,
       authority: 'https://accounts.google.com',
       client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID,
       scope: 'openid profile email',
@@ -36,36 +38,36 @@ function getConfig(provider) {
       code_challenge_method: 'S256',
       // Add additional Google OAuth parameters
       extraQueryParams: {
-        access_type: 'offline'
+        access_type: 'offline',
         // No prompt parameter - Google will handle returning users automatically
-      }
-    };
+      },
+    }
   }
-  
-  throw new Error('Unsupported provider');
+
+  throw new Error('Unsupported provider')
 }
 
 class AuthService {
   constructor() {
-    this.currentProvider = null;
+    this.currentProvider = null
   }
 
   async signIn(provider, invitationToken) {
-    this.currentProvider = provider;
-    const mgr = new UserManager(getConfig(provider));
-    await mgr.signinRedirect({ state: { provider, 'invitation_token': invitationToken } });
+    this.currentProvider = provider
+    const mgr = new UserManager(getConfig(provider))
+    await mgr.signinRedirect({ state: { provider, invitation_token: invitationToken } })
   }
 
   async handleCallback(provider) {
-    this.currentProvider = provider;
-    const mgr = new UserManager(getConfig(this.currentProvider));
-    const user = await mgr.signinRedirectCallback();
+    this.currentProvider = provider
+    const mgr = new UserManager(getConfig(this.currentProvider))
+    const user = await mgr.signinRedirectCallback()
     return {
       provider: this.currentProvider,
       profile: user.profile,
       idToken: user.id_token,
-      accessToken: user.access_token
-    };
+      accessToken: user.access_token,
+    }
   }
 
   /**
@@ -73,40 +75,40 @@ class AuthService {
    * This is needed if you're doing the /token exchange on your backend.
    */
   async getCodeVerifier() {
-    const urlParams = new URLSearchParams(window.location.search);
-    const stateKey = urlParams.get('state');
+    const urlParams = new URLSearchParams(window.location.search)
+    const stateKey = urlParams.get('state')
     if (!stateKey) {
-      throw new Error('Missing state param in URL');
+      throw new Error('Missing state param in URL')
     }
 
-    const store = new WebStorageStateStore({ store: window.localStorage });
+    const store = new WebStorageStateStore({ store: window.localStorage })
     const stateData = JSON.parse(await store.get(stateKey))
 
     if (!stateData || !stateData.code_verifier) {
-      throw new Error('PKCE code_verifier not found in storage');
+      throw new Error('PKCE code_verifier not found in storage')
     }
 
-    return stateData.code_verifier;
+    return stateData.code_verifier
   }
 
   async getStateDataValue(key, strict = true) {
-    const urlParams = new URLSearchParams(window.location.search);
-    const stateKey = urlParams.get('state');
+    const urlParams = new URLSearchParams(window.location.search)
+    const stateKey = urlParams.get('state')
     if (!stateKey) {
-      throw new Error('Missing state param in URL');
+      throw new Error('Missing state param in URL')
     }
 
-    const store = new WebStorageStateStore({ store: window.localStorage });
-    const stateData = JSON.parse(await store.get(stateKey));
+    const store = new WebStorageStateStore({ store: window.localStorage })
+    const stateData = JSON.parse(await store.get(stateKey))
 
-    const value = stateData?.data?.[key] ?? null;
+    const value = stateData?.data?.[key] ?? null
 
     if (strict && value === null) {
-      throw new Error(`PKCE ${key} not found in storage`);
+      throw new Error(`PKCE ${key} not found in storage`)
     }
 
-    return value;
+    return value
   }
 }
 
-export default new AuthService();
+export default new AuthService()

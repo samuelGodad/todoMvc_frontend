@@ -7,7 +7,12 @@ export const useTaskStore = defineStore('task', {
     let initialSort = 'newest'
     try {
       const savedSort = localStorage.getItem('task_sort')
-      if (savedSort && ['newest', 'oldest', 'title_asc', 'title_desc', 'active_first', 'completed_first'].includes(savedSort)) {
+      if (
+        savedSort &&
+        ['newest', 'oldest', 'title_asc', 'title_desc', 'active_first', 'completed_first'].includes(
+          savedSort,
+        )
+      ) {
         initialSort = savedSort
       }
     } catch {
@@ -17,28 +22,28 @@ export const useTaskStore = defineStore('task', {
     return {
       tasks: [],
       filter: 'all', // 'all', 'active', 'completed'
-      sort: initialSort, 
+      sort: initialSort,
       loading: false,
     }
   },
 
   getters: {
-    activeTasks: (state) => state.tasks.filter(task => !task.completed),
-    completedTasks: (state) => state.tasks.filter(task => task.completed),
+    activeTasks: (state) => state.tasks.filter((task) => !task.completed),
+    completedTasks: (state) => state.tasks.filter((task) => task.completed),
     filteredTasks: (state) => {
       if (state.filter === 'active') {
-        return state.tasks.filter(task => !task.completed)
+        return state.tasks.filter((task) => !task.completed)
       } else if (state.filter === 'completed') {
-        return state.tasks.filter(task => task.completed)
+        return state.tasks.filter((task) => task.completed)
       }
       return state.tasks
     },
     filteredAndSortedTasks: (state) => {
       let items = state.tasks
       if (state.filter === 'active') {
-        items = state.tasks.filter(t => !t.completed)
+        items = state.tasks.filter((t) => !t.completed)
       } else if (state.filter === 'completed') {
-        items = state.tasks.filter(t => t.completed)
+        items = state.tasks.filter((t) => t.completed)
       }
 
       items = [...items]
@@ -60,7 +65,7 @@ export const useTaskStore = defineStore('task', {
             const da = getDate(a)
             const db = getDate(b)
             if (!da && !db) return 0
-            if (!da) return 1 
+            if (!da) return 1
             if (!db) return -1
             return new Date(db).getTime() - new Date(da).getTime()
           })
@@ -70,7 +75,7 @@ export const useTaskStore = defineStore('task', {
             const da = getDate(a)
             const db = getDate(b)
             if (!da && !db) return 0
-            if (!da) return 1 
+            if (!da) return 1
             if (!db) return -1
             return new Date(da).getTime() - new Date(db).getTime()
           })
@@ -100,8 +105,8 @@ export const useTaskStore = defineStore('task', {
       return items
     },
     tasksCount: (state) => state.tasks.length,
-    activeTasksCount: (state) => state.tasks.filter(task => !task.completed).length,
-    completedTasksCount: (state) => state.tasks.filter(task => task.completed).length,
+    activeTasksCount: (state) => state.tasks.filter((task) => !task.completed).length,
+    completedTasksCount: (state) => state.tasks.filter((task) => task.completed).length,
   },
 
   actions: {
@@ -169,7 +174,7 @@ export const useTaskStore = defineStore('task', {
       try {
         const response = await axios.put(`/tasks/${taskId}`, { title: title.trim() })
         if (response.data?.success) {
-          const index = this.tasks.findIndex(t => t.entity_id === taskId)
+          const index = this.tasks.findIndex((t) => t.entity_id === taskId)
           if (index !== -1) {
             this.tasks[index] = response.data.task
           }
@@ -188,7 +193,7 @@ export const useTaskStore = defineStore('task', {
      * Toggle task completion status
      */
     async toggleTask(taskId) {
-      const task = this.tasks.find(t => t.entity_id === taskId)
+      const task = this.tasks.find((t) => t.entity_id === taskId)
       if (!task) {
         this.showErrorNotification('Task not found')
         return false
@@ -201,7 +206,7 @@ export const useTaskStore = defineStore('task', {
           completed: newCompletedStatus,
         })
         if (response.data?.success) {
-          const index = this.tasks.findIndex(t => t.entity_id === taskId)
+          const index = this.tasks.findIndex((t) => t.entity_id === taskId)
           if (index !== -1) {
             this.tasks[index] = response.data.task
           }
@@ -223,7 +228,7 @@ export const useTaskStore = defineStore('task', {
       try {
         const response = await axios.delete(`/tasks/${taskId}`)
         if (response.data?.success) {
-          this.tasks = this.tasks.filter(t => t.entity_id !== taskId)
+          this.tasks = this.tasks.filter((t) => t.entity_id !== taskId)
           Notify.create({
             message: 'Task deleted successfully',
             color: 'positive',
@@ -273,4 +278,3 @@ export const useTaskStore = defineStore('task', {
 if (import.meta.hot) {
   import.meta.hot.accept(acceptHMRUpdate(useTaskStore, import.meta.hot))
 }
-

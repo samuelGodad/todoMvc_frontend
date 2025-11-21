@@ -11,7 +11,7 @@
             v-model="firstName"
             label="First Name"
             outlined
-            :rules="[val => !!val || 'First name is required']"
+            :rules="[(val) => !!val || 'First name is required']"
             autofocus
           />
 
@@ -19,7 +19,7 @@
             v-model="lastName"
             label="Last Name"
             outlined
-            :rules="[val => !!val || 'Last name is required']"
+            :rules="[(val) => !!val || 'Last name is required']"
           />
 
           <div class="row q-gutter-sm justify-end">
@@ -30,12 +30,7 @@
               @click="showDialog = false"
               :disable="loading"
             />
-            <q-btn
-              label="Save"
-              type="submit"
-              color="primary"
-              :loading="loading"
-            />
+            <q-btn label="Save" type="submit" color="primary" :loading="loading" />
           </div>
         </q-form>
       </q-card-section>
@@ -88,4 +83,3 @@ async function onSubmit() {
   }
 }
 </script>
-

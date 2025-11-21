@@ -14,10 +14,10 @@
           <q-input v-model="email" type="email" label="Email" outlined class="q-mb-lg" />
 
           <!-- Reset password Button -->
-          <q-btn 
-            label="Reset password" 
-            color="primary" 
-            type="submit" 
+          <q-btn
+            label="Reset password"
+            color="primary"
+            type="submit"
             class="full-width"
             :loading="loading"
           />
@@ -36,7 +36,7 @@
     </q-card>
   </q-page>
 </template>
-  
+
 <script setup>
 import { ref } from 'vue'
 import { useAuthStore } from 'stores/auth'
@@ -67,4 +67,3 @@ async function onSubmit() {
   }
 }
 </script>
-  

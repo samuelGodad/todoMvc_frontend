@@ -22,7 +22,7 @@
           color="primary"
           class="add-btn"
           icon="send"
-          @click="handleSubmit"   
+          @click="handleSubmit"
           :loading="taskStore.loading"
         />
         <q-btn
@@ -87,7 +87,7 @@ async function handleSubmit() {
 }
 
 .input-pill .q-field {
-  box-shadow: 0 4px 12px rgba(16,24,40,0.04);
+  box-shadow: 0 4px 12px rgba(16, 24, 40, 0.04);
   border-radius: 999px;
 }
 
@@ -95,4 +95,3 @@ async function handleSubmit() {
   min-width: 56px;
 }
 </style>
-

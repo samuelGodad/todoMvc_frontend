@@ -32,10 +32,10 @@
           />
 
           <!-- Set password Button -->
-          <q-btn 
-            label="Set password" 
-            color="primary" 
-            type="submit" 
+          <q-btn
+            label="Set password"
+            color="primary"
+            type="submit"
             class="full-width"
             :loading="loading"
             :disable="!password || !passwordConfirm || password !== passwordConfirm"
@@ -45,7 +45,7 @@
     </q-card>
   </q-page>
 </template>
-  
+
 <script setup>
 import { ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
@@ -73,13 +73,13 @@ async function onSubmit() {
   if (password.value !== passwordConfirm.value) {
     return
   }
-  
+
   loading.value = true
   try {
     const result = await authStore.setPassword(token, uidb64, {
-    password: password.value,
-  })
-    
+      password: password.value,
+    })
+
     // Redirect to login page after successful password reset
     if (result?.success && result?.redirectToLogin) {
       router.push('/login')
@@ -89,4 +89,3 @@ async function onSubmit() {
   }
 }
 </script>
-  

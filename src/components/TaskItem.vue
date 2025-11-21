@@ -1,9 +1,5 @@
 <template>
-  <q-item
-    :class="{ 'task-completed': task.completed }"
-    class="task-item"
-    clickable
-  >
+  <q-item :class="{ 'task-completed': task.completed }" class="task-item" clickable>
     <q-item-section avatar>
       <q-checkbox
         :model-value="task.completed"
@@ -13,7 +9,7 @@
       />
     </q-item-section>
 
-      <q-item-section>
+    <q-item-section>
       <q-input
         v-if="isEditing"
         v-model="editTitle"
@@ -28,10 +24,10 @@
       />
       <q-item-label
         v-else
-        :class="{ 
-          'text-strikethrough': task.completed, 
+        :class="{
+          'text-strikethrough': task.completed,
           'text-grey-6': task.completed,
-          'cursor-pointer': !task.completed
+          'cursor-pointer': !task.completed,
         }"
         class="task-label"
         @dblclick="handleLabelClick"
@@ -94,11 +90,10 @@
 
       <q-card-section>
         <div class="text-body1">
-          Are you sure you want to delete "<strong>{{ task.title }}</strong>"?
+          Are you sure you want to delete "<strong>{{ task.title }}</strong
+          >"?
         </div>
-        <div class="text-caption text-grey-6 q-mt-sm">
-          This action cannot be undone.
-        </div>
+        <div class="text-caption text-grey-6 q-mt-sm">This action cannot be undone.</div>
       </q-card-section>
 
       <q-card-actions align="right">
@@ -174,7 +169,9 @@ async function confirmDelete() {
 .task-item {
   border-bottom: 1px solid rgba(0, 0, 0, 0.06);
   padding: 12px 14px;
-  transition: transform 0.12s ease, background-color 0.12s ease;
+  transition:
+    transform 0.12s ease,
+    background-color 0.12s ease;
   border-radius: 6px;
 }
 
@@ -223,4 +220,3 @@ async function confirmDelete() {
   text-decoration: line-through;
 }
 </style>
-
